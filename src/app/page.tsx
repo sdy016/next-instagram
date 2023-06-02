@@ -21,7 +21,9 @@ export default async function Home() {
         <FollowingBar />
         <PostList />
       </div>
-      <SideBar user={user} />
+      <div className="basis-1/4">
+        <SideBar user={user} />
+      </div>
     </section>
   );
 }

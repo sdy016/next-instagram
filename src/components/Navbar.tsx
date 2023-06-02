@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
-import HomeIcon from "./ui/icons/HomeIcon";
-import HomeFillIcon from "./ui/icons/HomeFillIcon";
-import SearchIcon from "./ui/icons/SearchIcon";
-import SearchFillIcon from "./ui/icons/SearchFillIcon";
-import NewIcon from "./ui/icons/NewIcon";
-import NewFillIcon from "./ui/icons/NewFillIcon";
-import ColorButton from "./ui/ColorButton";
-import { useSession, signIn, signOut } from "next-auth/react";
-import Avatar from "./Avatar";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React from 'react';
+import HomeIcon from './ui/icons/HomeIcon';
+import HomeFillIcon from './ui/icons/HomeFillIcon';
+import SearchIcon from './ui/icons/SearchIcon';
+import SearchFillIcon from './ui/icons/SearchFillIcon';
+import NewIcon from './ui/icons/NewIcon';
+import NewFillIcon from './ui/icons/NewFillIcon';
+import ColorButton from './ui/ColorButton';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import Avatar from './Avatar';
 
 type Props = {};
 
 const menus = [
-  { href: "/", icon: <HomeIcon />, clickedIcon: <HomeFillIcon /> },
-  { href: "/search", icon: <SearchIcon />, clickedIcon: <SearchFillIcon /> },
-  { href: "/new", icon: <NewIcon />, clickedIcon: <NewFillIcon /> },
+  { href: '/', icon: <HomeIcon />, clickedIcon: <HomeFillIcon /> },
+  { href: '/search', icon: <SearchIcon />, clickedIcon: <SearchFillIcon /> },
+  { href: '/new', icon: <NewIcon />, clickedIcon: <NewFillIcon /> },
 ];
 
 export default function Navbar({}: Props) {
@@ -34,15 +34,13 @@ export default function Navbar({}: Props) {
         <ul className="flex gap-4 items-center p-4">
           {menus.map((menu) => (
             <li key={menu.href}>
-              <Link href={menu.href}>
-                {path === menu.href ? menu.clickedIcon : menu.icon}
-              </Link>
+              <Link href={menu.href}>{path === menu.href ? menu.clickedIcon : menu.icon}</Link>
             </li>
           ))}
           {user && (
             <li>
               <Link href={`/user/${user.username}`}>
-                <Avatar image={user.image} />
+                <Avatar image={user.image} size="small" highlight />
               </Link>
             </li>
           )}
