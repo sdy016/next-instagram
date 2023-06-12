@@ -5,12 +5,21 @@ import useSWR from 'swr';
 import Avatar from './Avatar';
 import GridSpinner from './ui/GridSpinner';
 import UserCard from './UserCard';
+import useDebounce from '@/util/hooks/useDebounce';
 
 type Props = {};
 
 export default function UserSearch({}: Props) {
-  const [keyword, setKeyword] = useState('');
-  const { data: users, isLoading, error } = useSWR<SearchUser[]>(`/api/search${keyword ? '/' + keyword : ''}`);
+  const [keyword, setKeyword] = useState<string>('');
+  const debouncedSearch = useDebounce(keyword, 1000);
+
+  const {
+    data: users,
+    isLoading,
+    error,
+  } = useSWR<SearchUser[]>(
+    `/api/search${debouncedSearch ? '/' + debouncedSearch : ''}`
+  );
 
   const handleKeyword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
@@ -24,7 +33,7 @@ export default function UserSearch({}: Props) {
 
   return (
     <section className="w-full max-w-2xl my-4 flex flex-col items-center">
-      <form className="w-full mb-4" onSubmit={onSubmit}>
+      <form className="w-full px-2 mb-4" onSubmit={onSubmit}>
         <input
           className="w-full text-xl p-3 outline-none border border-gray-400"
           type="text"
@@ -36,7 +45,9 @@ export default function UserSearch({}: Props) {
       </form>
       {error && <p>무언가가 잘못 되었다!</p>}
       {isLoading && <GridSpinner />}
-      {!isLoading && !error && users?.length === 0 && <p>찾는 사용자가 없음.</p>}
+      {!isLoading && !error && users?.length === 0 && (
+        <p>찾는 사용자가 없음.</p>
+      )}
       <ul className="w-full p-4">
         {users &&
           users.map((user: SearchUser) => (
