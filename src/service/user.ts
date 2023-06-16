@@ -36,7 +36,9 @@ export async function getUserByUsername(username: string) {
 }
 
 export async function searchUsers(keyword?: string) {
-  const filter = keyword ? `&& (name match "${keyword}") || (username match "${keyword}")` : '';
+  const filter = keyword
+    ? `&& (name match "${keyword}") || (username match "${keyword}")`
+    : '';
   const query = `
     *[_type == "user" ${filter} ]
     {
@@ -45,9 +47,58 @@ export async function searchUsers(keyword?: string) {
       "followers":count(followers)
     }
   `;
+  return client.fetch(query).then((users) =>
+    users.map((user: SearchUser) => ({
+      ...user,
+      following: user.following ?? 0,
+      followers: user.followers ?? 0,
+    }))
+  );
+}
+
+export async function getUserForProfile(username: string) {
   return client
-    .fetch(query)
-    .then((users) =>
-      users.map((user: SearchUser) => ({ ...user, following: user.following ?? 0, followers: user.followers ?? 0 }))
-    );
+    .fetch(
+      `
+    *[_type == "user" && username == "${username}"][0]
+    {
+      ..., 
+      "id" : _id, 
+      "following":count(following),
+      "followers":count(followers),
+      "posts": count(*[_type =="post" && author->username == "${username}"])
+    }
+  `
+    )
+    .then((user) => {
+      if (!user) {
+        return null;
+      }
+      return {
+        ...user,
+        following: user.following ?? 0,
+        followers: user.followers ?? 0,
+        posts: user.posts ?? 0,
+      };
+    });
+}
+
+export async function addbookMark(userId: string, postId: string) {
+  return client
+    .patch(userId) //
+    .setIfMissing({ bookmarks: [] })
+    .append('bookmarks', [
+      {
+        _ref: postId,
+        _type: 'reference',
+      },
+    ])
+    .commit({ autoGenerateArrayKeys: true });
+}
+
+export async function removeBookMark(userId: string, postId: string) {
+  return client
+    .patch(userId)
+    .unset([`bookmarks[_ref=="${postId}"]`])
+    .commit();
 }

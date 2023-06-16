@@ -1,6 +1,8 @@
 import { RiBookmarkLine } from 'react-icons/ri';
 import React from 'react';
-
-export default function BookmarkIcon() {
-  return <RiBookmarkLine className="w-6 h-6" />;
+type Props = {
+  classname?: string;
+};
+export default function BookmarkIcon({ classname }: Props) {
+  return <RiBookmarkLine className={classname || 'w-6 h-6'} />;
 }

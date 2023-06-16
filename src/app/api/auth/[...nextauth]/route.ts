@@ -1,12 +1,12 @@
-import { addUser } from "@/service/user";
-import NextAuth, { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import { addUser } from '@/service/user';
+import NextAuth, { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_OAUTH_ID || "",
-      clientSecret: process.env.GOOGLE_OAUTH_SECRET || "",
+      clientId: process.env.GOOGLE_OAUTH_ID || '',
+      clientSecret: process.env.GOOGLE_OAUTH_SECRET || '',
     }),
     // ...add more providers here
   ],
@@ -17,35 +17,35 @@ export const authOptions: NextAuthOptions = {
       }
       addUser({
         id,
-        name: name || "",
+        name: name || '',
         image,
         email,
-        username: email?.split("@")[0],
+        username: email?.split('@')[0],
       });
       return true;
     },
-    async session({ session }) {
-      console.log("session: ", session);
+    async session({ session, token }) {
       const user = session?.user;
       if (user) {
         session.user = {
           ...user,
-          username: user.email?.split("@")[0] || "",
+          username: user.email?.split('@')[0] || '',
+          id: token?.id as string,
         };
       }
-      // session.image = session.image;
       return session;
     },
-    // async session({ session, token, user }) {
-    //   console.log('user: ', user);
-
-    //   return session;
-    // },
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
   },
   pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signout",
-    error: "/auth/error", // Error code passed in query string as ?error=
+    signIn: '/auth/signin',
+    signOut: '/auth/signout',
+    error: '/auth/error', // Error code passed in query string as ?error=
   },
 };
 const handler = NextAuth(authOptions);

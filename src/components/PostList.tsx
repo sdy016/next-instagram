@@ -4,11 +4,12 @@ import useSWR from 'swr';
 import { SimplePost } from '@/model/post';
 import PostCard from './PostCard';
 import GridSpinner from './ui/GridSpinner';
+import usePosts from '@/util/hooks/posts';
 
 type Props = {};
 
 export default function PostList({}: Props) {
-  const { data: posts, isLoading: loading } = useSWR<SimplePost[]>('/api/posts');
+  const { posts, isLoading: loading } = usePosts();
 
   return (
     <section>

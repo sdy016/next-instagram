@@ -1,17 +1,18 @@
 'use client';
-import { DetailUser } from '@/model/user';
+import { HomeUser } from '@/model/user';
 import Link from 'next/link';
 import React from 'react';
 import { PropagateLoader } from 'react-spinners';
 import useSWR from 'swr';
 import Avatar from './Avatar';
 import ScrollableBar from './ScrollableBar';
+import useMe from '@/util/hooks/me';
 type Props = {};
 
 export default function FollowingBar({}: Props) {
-  const { data, isLoading: loading, error } = useSWR<DetailUser>('/api/me');
+  const { user, isLoading: loading } = useMe();
   // const users = data?.following;
-  const users = data?.following && [...data?.following, ...data?.following, ...data?.following, ...data?.following];
+  const users = user?.following;
 
   // const session = useSession();
   return (
@@ -24,9 +25,15 @@ export default function FollowingBar({}: Props) {
       {users && users.length > 0 && (
         <ScrollableBar>
           {users.map(({ image, username }) => (
-            <Link key={username} className="flex flex-col items-center w-20" href={`/user/${username}`}>
+            <Link
+              key={username}
+              className="flex flex-col items-center w-20"
+              href={`/user/${username}`}
+            >
               <Avatar image={image} highlight />
-              <p className="w-full text-sm text-center text-ellipsis overflow-hidden">{username}</p>
+              <p className="w-full text-sm text-center text-ellipsis overflow-hidden">
+                {username}
+              </p>
             </Link>
           ))}
         </ScrollableBar>

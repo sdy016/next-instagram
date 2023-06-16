@@ -11,7 +11,7 @@ type Props = {};
 
 export default function UserSearch({}: Props) {
   const [keyword, setKeyword] = useState<string>('');
-  const debouncedSearch = useDebounce(keyword, 1000);
+  const debouncedSearch = useDebounce(keyword);
 
   const {
     data: users,

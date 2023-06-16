@@ -1,13 +1,20 @@
 import type {
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
-} from "next";
-import { getProviders, signIn } from "next-auth/react";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
-import ColorButton from "@/components/ui/ColorButton";
-import { redirect } from "next/navigation";
-import Signin from "@/components/Signin";
+  Metadata,
+} from 'next';
+import { getProviders, signIn } from 'next-auth/react';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../../api/auth/[...nextauth]/route';
+import ColorButton from '@/components/ui/ColorButton';
+import { redirect } from 'next/navigation';
+import Signin from '@/components/Signin';
+// import { metadata } from '../../layout';
+
+export const metadata: Metadata = {
+  title: 'Signin',
+  description: 'Signup or Login to Instagram2',
+};
 
 type Props = {
   searchParams: {
@@ -21,7 +28,7 @@ export default async function SigninPage({
   const session = await getServerSession(authOptions);
 
   if (session) {
-    redirect("/");
+    redirect('/');
   }
 
   const providers = (await getProviders()) ?? {};
@@ -29,7 +36,7 @@ export default async function SigninPage({
   return (
     <>
       <section className="flex justify-center mt-24">
-        <Signin providers={providers} callbackUrl={callbackUrl ?? "/"} />
+        <Signin providers={providers} callbackUrl={callbackUrl ?? '/'} />
       </section>
     </>
   );

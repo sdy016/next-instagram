@@ -38,22 +38,6 @@ export default function PostCard({ post, priority = false }: Props) {
           <PostModal onClose={() => setOpenModal(false)}>
             <PostDetail post={post} />
           </PostModal>
-          {/* <div className="fixed top-0 left-0 w-full h-full bg-slate-500 z-50">포스트 상세 페이지!</div> */}
-          {/* <div className="w-full absolute h-full top-0 flex">
-            <Image
-              className="w-full object-cover aspect-square"
-              src={image}
-              alt={`photo by ${username}`}
-              width={500}
-              height={500}
-              priority
-              onClick={() => setOpenModal((prev) => !prev)}
-            />
-            <div className="flex flex-col">
-              <ActionBar post={post} />
-              <CommentForm />
-            </div>
-          </div> */}
         </ModalPortal>
       )}
     </article>
