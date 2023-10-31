@@ -9,6 +9,13 @@ async function updateLike(id: string, like: boolean) {
   }).then((res) => res.json());
 }
 
+async function addComment(id: string, comment: string) {
+  return fetch('/api/comments', {
+    method: 'POST',
+    body: JSON.stringify({ id, comment }),
+  }).then((res) => res.json());
+}
+
 export default function usePosts() {
   const {
     data: posts,
@@ -32,5 +39,21 @@ export default function usePosts() {
     });
   };
 
-  return { posts, isLoading, error, setLike };
+  const postComment = (post: SimplePost, comment: string) => {
+    console.log('post: ', post);
+    const newPost = {
+      ...post,
+      comments: post.comments + 1,
+    };
+    const newPosts = posts?.map((p) => (p.id === post.id ? newPost : p));
+    console.log('newPosts: ', newPosts);
+    return mutate(addComment(post.id, comment), {
+      optimisticData: newPosts,
+      populateCache: false,
+      revalidate: false,
+      rollbackOnError: true,
+    });
+  };
+
+  return { posts, isLoading, error, setLike, postComment };
 }

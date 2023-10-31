@@ -6,6 +6,7 @@ import CommentForm from './CommentForm';
 import useSWR from 'swr';
 import PostUserAvatar from './PostUserAvatar';
 import Avatar from './Avatar';
+import usePosts from '@/util/hooks/posts';
 
 type Props = {
   post: SimplePost;
@@ -16,27 +17,45 @@ export default function PostDetail({ post }: Props) {
   const { data } = useSWR<FullPost>(`/api/posts/${id}`);
   const comments = data?.comments;
 
+  const { postComment } = usePosts();
+  const handlePostComment = (comment: string) => {
+    postComment(post, comment);
+  };
+
   return (
     <section className="flex w-full h-full">
       <div className="relative basis-3/5">
-        <Image className="object-cover" src={image} alt={`photo by ${username}`} fill sizes="650px" priority />
+        <Image
+          className="object-cover"
+          src={image}
+          alt={`photo by ${username}`}
+          fill
+          sizes="650px"
+          priority
+        />
       </div>
       <div className="w-full basis-2/5 flex flex-col">
         <PostUserAvatar userImage={userImage} username={username} />
         <ul className="border-t border-gray-200 h-full overflow-y-auto p-4 mb-1">
           {comments &&
-            comments.map(({ image, username: commentUsername, comment }, index) => (
-              <li key={index} className="flex items-center mb-1">
-                <Avatar image={image} size="small" highlight={commentUsername === username} />
-                <div className="ml-2">
-                  <span className="font-bold mr-1">{commentUsername}</span>
-                  <span>{comment}</span>
-                </div>
-              </li>
-            ))}
+            comments.map(
+              ({ image, username: commentUsername, comment }, index) => (
+                <li key={index} className="flex items-center mb-1">
+                  <Avatar
+                    image={image}
+                    size="small"
+                    highlight={commentUsername === username}
+                  />
+                  <div className="ml-2">
+                    <span className="font-bold mr-1">{commentUsername}</span>
+                    <span>{comment}</span>
+                  </div>
+                </li>
+              )
+            )}
         </ul>
         <ActionBar post={post} />
-        <CommentForm />
+        <CommentForm onPostComment={handlePostComment} />
       </div>
     </section>
   );

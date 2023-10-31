@@ -15,11 +15,11 @@ export const metadata: Metadata = {
   description: 'Instagram2 Photos',
 };
 
-export default function RootLayout({
-  children,
-}: {
+type Props = {
   children: React.ReactNode;
-}) {
+};
+
+export default function RootLayout({ children }: Props) {
   return (
     <html lang="en" className={sans.className}>
       <body className="w-full bg-neutral-50 overflow-auto">
