@@ -1,24 +1,23 @@
 'use client';
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React from 'react';
 import HeartIcon from './ui/icons/HeartIcon';
 import BookmarkIcon from './ui/icons/BookmarkIcon';
 import { parseDate } from '@/util/date';
-import { SimplePost } from '@/model/post';
+import { Comment, SimplePost } from '@/model/post';
 import ToggleButton from './ui/ToggleButton';
 import HeartFillIcon from './ui/icons/HeartFillIcon';
 import BookmarkFillIcon from './ui/icons/BookmarkFillIcon';
-import { useSession } from 'next-auth/react';
-import { useSWRConfig } from 'swr';
 import usePosts from '@/util/hooks/posts';
 import useMe from '@/util/hooks/me';
+import CommentForm from './CommentForm';
 
 type Props = {
   post: SimplePost;
   children?: React.ReactNode;
+  onComment: (comment: Comment) => void;
 };
 
-export default function ActionBar({ post, children }: Props) {
+export default function ActionBar({ post, children, onComment }: Props) {
   const { id, likes, createdAt } = post;
   const { user, setBookmark } = useMe();
   const { setLike } = usePosts();
@@ -31,6 +30,10 @@ export default function ActionBar({ post, children }: Props) {
 
   const handleBookmark = (bookmark: boolean) => {
     user && setBookmark(id, bookmark);
+  };
+
+  const handleComment = (comment: string) => {
+    user && onComment({ comment, username: user.username, image: user.image });
   };
 
   return (
@@ -53,12 +56,13 @@ export default function ActionBar({ post, children }: Props) {
         <p className="text-sm font-bold mb-2">{`${likes?.length ?? 0} ${
           likes?.length > 1 ? 'likes' : 'like'
         }`}</p>
-        
+
         {children}
         <p className="text-xs text-neutral-500 uppercase my-4">
           {parseDate(createdAt)}
         </p>
       </div>
+      <CommentForm onPostComment={handleComment} />
     </>
   );
 }
